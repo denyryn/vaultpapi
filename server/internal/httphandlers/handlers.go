@@ -271,14 +271,13 @@ type UserClaims struct {
 	IssuedAt time.Time
 }
 
-// LoggingMiddleware logs request method, path, and duration.
+// LoggingMiddleware logs request method, path, status code, and duration.
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		// Call next handler to process the request
-		next.ServeHTTP(w, r)
-		// Log details after handler execution
-		log.Printf("[%s]\t%s\t\t\t\t\t%v", r.Method, r.URL.Path, time.Since(start))
+		rw := &responseWriter{ResponseWriter: w}
+		next.ServeHTTP(rw, r)
+		log.Printf("[%s]\t%s\t%d\t%v", r.Method, r.URL.Path, rw.status, time.Since(start))
 	})
 }
 

@@ -20,7 +20,10 @@ export type Message =
       }
     | { type: "GET_AUTH_STATUS" }
     | { type: "VAULT_UPDATED" }
-    | { type: "LOGOUT" };
+    | { type: "LOGOUT" }
+    | { type: "SET_PENDING_SAVE"; data: { username: string; password: string; url: string; domain: string } }
+    | { type: "GET_PENDING_SAVE" }
+    | { type: "CLEAR_PENDING_SAVE" };
 
 let vaultService: VaultService | null = null;
 
@@ -111,6 +114,24 @@ async function handleMessage(message: Message): Promise<unknown> {
             vaultService = null;
             await session.clear();
             return { success: true };
+        }
+
+        case "SET_PENDING_SAVE": {
+            await session.set({ pendingSave: message.data });
+            return { success: true };
+        }
+
+        case "GET_PENDING_SAVE": {
+            const data = await session.get();
+            return { pendingSave: data.pendingSave || null };
+        }
+
+        case "CLEAR_PENDING_SAVE": {
+            return new Promise((resolve) => {
+                chrome.storage.session.remove(["pendingSave"], () => {
+                    resolve({ success: true });
+                });
+            });
         }
 
         default:

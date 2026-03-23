@@ -8,6 +8,12 @@ export interface SessionData {
   userEmail: string;
   userId: string;
   vaultVersion: number;
+  pendingSave?: {
+    username: string;
+    password: string;
+    url: string;
+    domain: string;
+  };
 }
 
 export interface PersistentConfig {

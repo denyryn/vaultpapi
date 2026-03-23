@@ -1,0 +1,22 @@
+database:
+    connection_string: "postgres://postgres:postgres@localhost:5432/vaultpapi?sslmode=disable"
+    max_conns: 10
+    min_conns: 2
+
+server:
+    port: "8080"
+    read_timeout: 15s
+    write_timeout: 15s
+    idle_timeout: 60s
+    shutdown_time: 30s
+
+jwt:
+    secret: "change-this-to-a-secure-secret-at-least-32-bytes"
+    expiry_duration: 24h
+    issuer: "vaultpapi"
+
+security:
+    rate_limit_requests: 100
+    rate_limit_window: 1m
+    max_request_size: 1048576
+    extension_id: "chrome-extension://<extension-id>"

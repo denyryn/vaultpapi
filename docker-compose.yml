@@ -27,7 +27,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DB_CONNECTION_STRING: "postgres://postgres:postgres@postgres:5432/vaultpapi?sslmode=disable"
+      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/vaultpapi?sslmode=disable"
       JWT_SECRET: "change-this-to-a-secure-secret-at-least-32-bytes"
       PORT: "8080"
     ports:

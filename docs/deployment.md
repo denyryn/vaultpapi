@@ -22,7 +22,7 @@ docker build -t vaultpapi .
 docker run -d \
   --name vaultpapi \
   -p 8080:8080 \
-  -e DB_CONNECTION_STRING="postgres://user:pass@host:5432/vaultpapi?sslmode=require" \
+  -e DATABASE_URL="postgres://user:pass@host:5432/vaultpapi?sslmode=require" \
   -e JWT_SECRET="your-secure-secret" \
   vaultpapi
 ```
@@ -62,7 +62,7 @@ Environment variables override config.yaml values:
 
 | Variable | Description |
 |----------|-------------|
-| `DB_CONNECTION_STRING` | PostgreSQL connection string |
+| `DATABASE_URL` | PostgreSQL connection string |
 | `JWT_SECRET` | Secret key for JWT signing (min 32 bytes) |
 | `DB_MAX_CONNS` | Maximum database connections |
 | `PORT` | Server port |

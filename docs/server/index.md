@@ -57,7 +57,7 @@ server/
 
 4. Configure the database connection:
    ```bash
-   export DB_CONNECTION_STRING="postgres://user:pass@localhost:5432/vaultpapi?sslmode=disable"
+   export DATABASE_URL="postgres://user:pass@localhost:5432/vaultpapi?sslmode=disable"
    export JWT_SECRET="your-secure-secret-key-at-least-32-bytes"
    ```
 

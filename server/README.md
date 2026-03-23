@@ -232,7 +232,7 @@ Environment variables override config.yaml values:
 
 | Variable | Description |
 |----------|-------------|
-| `DB_CONNECTION_STRING` | PostgreSQL connection string |
+| `DATABASE_URL` | PostgreSQL connection string |
 | `JWT_SECRET` | Secret key for JWT signing (min 32 bytes) |
 | `DB_MAX_CONNS` | Maximum database connections |
 | `PORT` | Server port |
@@ -281,7 +281,7 @@ CREATE TABLE vaults (
 
 4. Configure the database connection:
    ```bash
-   export DB_CONNECTION_STRING="postgres://user:pass@localhost:5432/vaultpapi?sslmode=disable"
+   export DATABASE_URL="postgres://user:pass@localhost:5432/vaultpapi?sslmode=disable"
    export JWT_SECRET="your-secure-secret-key-at-least-32-bytes"
    ```
 

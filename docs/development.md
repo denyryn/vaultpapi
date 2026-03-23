@@ -30,7 +30,7 @@ docker run -d \
 ```bash
 cd server
 
-export DB_CONNECTION_STRING="postgres://postgres:postgres@localhost:5432/vaultpapi?sslmode=disable"
+export DATABASE_URL="postgres://postgres:postgres@localhost:5432/vaultpapi?sslmode=disable"
 export JWT_SECRET="dev-secret-key-at-least-32-bytes"
 
 go run ./cmd/vaultpapi -migrate

@@ -33,7 +33,7 @@ vaultpapi/
 cd server
 
 # Configure database
-export DB_CONNECTION_STRING="postgres://postgres:postgres@localhost:5432/vaultpapi?sslmode=disable"
+export DATABASE_URL="postgres://postgres:postgres@localhost:5432/vaultpapi?sslmode=disable"
 export JWT_SECRET="your-secure-secret-key-at-least-32-bytes"
 
 # Run migrations and start server
@@ -98,7 +98,7 @@ The server implements a zero-knowledge architecture:
 
 | Variable | Description |
 |----------|-------------|
-| `DB_CONNECTION_STRING` | PostgreSQL connection string |
+| `DATABASE_URL` | PostgreSQL connection string |
 | `JWT_SECRET` | JWT signing secret (min 32 bytes) |
 | `PORT` | Server port (default: 8080) |
 | `RATE_LIMIT_REQUESTS` | Requests per minute per IP |

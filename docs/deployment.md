@@ -1,5 +1,32 @@
 # Deployment Guide
 
+## Docker
+
+Use the provided `docker-compose.yml` for local development:
+
+```bash
+docker-compose up -d
+```
+
+This starts:
+- PostgreSQL 15 on port 5432
+- VaultPAPI server on port 8080
+
+### Production Docker
+
+Build and run the server container:
+
+```bash
+cd server
+docker build -t vaultpapi .
+docker run -d \
+  --name vaultpapi \
+  -p 8080:8080 \
+  -e DB_CONNECTION_STRING="postgres://user:pass@host:5432/vaultpapi?sslmode=require" \
+  -e JWT_SECRET="your-secure-secret" \
+  vaultpapi
+```
+
 ## Server Configuration
 
 ### config.yaml

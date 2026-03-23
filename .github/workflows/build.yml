@@ -2,10 +2,11 @@ name: Build and Release
 
 on:
     push:
-        branches:
-            - main
         tags:
             - "v*"
+
+permissions:
+    contents: write
 
 jobs:
     build:
@@ -39,20 +40,16 @@ jobs:
 
             - name: Pack extension
               run: |
-                  cd extension
-                  zip -r vaultpapi-extension.zip dist
+                  cd extension/dist
+                  zip -r ../vaultpapi-extension.zip .
 
             - name: Create Release
-              if: startsWith(github.ref, 'refs/tags/')
               uses: softprops/action-gh-release@v2
               with:
                   files: |
                       server/bin/vaultpapi
-                      extension/dist/**
                       extension/vaultpapi-extension.zip
                   generate_release_notes: true
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Upload artifacts
               if: always()
@@ -61,6 +58,5 @@ jobs:
                   name: build-artifacts
                   path: |
                       server/bin/vaultpapi
-                      extension/dist/**
                       extension/vaultpapi-extension.zip
                   retention-days: 7

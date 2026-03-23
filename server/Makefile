@@ -11,8 +11,7 @@ clean:
 	@rm -rf $(BIN_DIR)
 
 build: clean
-	@echo $(BIN_DIR)
-	@mkdir $(BIN_DIR)
-	@go build -o $(BIN_DIR) $(ENTRY_POINT)
+	@mkdir -p $(BIN_DIR)
+	@go build -o $(BIN_DIR)/vaultpapi $(ENTRY_POINT)
 
 all: build

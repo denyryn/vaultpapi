@@ -45,6 +45,13 @@ export class VaultService {
         this.masterPassword
       );
       this.vault = decrypted;
+      // Also fetch current version from server to avoid conflicts
+      try {
+        const serverVault = await this.client.getVault();
+        this.currentVersion = serverVault.version;
+      } catch {
+        // If we can't reach server, use version 1 (will likely fail on save)
+      }
       return this.vault;
     } catch {
       return null;
@@ -56,10 +63,23 @@ export class VaultService {
     if (!this.vault) throw new Error("no_vault_loaded");
 
     const encrypted = await encryptVault(this.vault, this.masterPassword);
-    const result = await this.client.saveVault(encrypted, this.currentVersion);
 
-    this.currentVersion = result.version;
-    await vaultCache.setEncryptedBlob(result.encrypted_blob);
+    try {
+      const result = await this.client.saveVault(encrypted, this.currentVersion);
+      this.currentVersion = result.version;
+      await vaultCache.setEncryptedBlob(result.encrypted_blob);
+    } catch (error: unknown) {
+      // Handle version conflict by re-fetching and retrying once
+      if (error instanceof Error && error.message.includes("version conflict")) {
+        await this.load();
+        const encryptedRetry = await encryptVault(this.vault!, this.masterPassword);
+        const result = await this.client.saveVault(encryptedRetry, this.currentVersion);
+        this.currentVersion = result.version;
+        await vaultCache.setEncryptedBlob(result.encrypted_blob);
+      } else {
+        throw error;
+      }
+    }
   }
 
   getEntries(): VaultEntry[] {

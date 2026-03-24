@@ -20,6 +20,7 @@ export function AuthScreen({ onSuccess, onSwitchSetup }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [instanceUrl, setInstanceUrl] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showMaster, setShowMaster] = useState(false);
 
   useEffect(() => {
     local.get().then((config) => {
@@ -32,15 +33,16 @@ export function AuthScreen({ onSuccess, onSwitchSetup }: Props) {
     setError(null);
 
     if (!email || !password) {
-      setError("Email and password are required");
+      setError("Email and account password are required");
+      return;
+    }
+
+    if (!masterPassword) {
+      setError("Master password is required");
       return;
     }
 
     if (mode === "register") {
-      if (!masterPassword) {
-        setError("Master password is required");
-        return;
-      }
       if (masterPassword !== confirmMaster) {
         setError("Master passwords do not match");
         return;
@@ -63,12 +65,10 @@ export function AuthScreen({ onSuccess, onSwitchSetup }: Props) {
       const { token, user } = await client.login(email, password);
       client.setToken(token);
 
-      const usedMasterPw = mode === "register" ? masterPassword : password;
-
       // Store session data (in-memory only, cleared on browser close)
       await session.set({
         token,
-        masterPassword: usedMasterPw,
+        masterPassword: masterPassword,
         userEmail: user.email,
         userId: user.id,
         vaultVersion: 1,
@@ -78,7 +78,7 @@ export function AuthScreen({ onSuccess, onSwitchSetup }: Props) {
 
       // Initialize vault if new account
       if (mode === "register") {
-        const vaultSvc = new VaultService(client, usedMasterPw);
+        const vaultSvc = new VaultService(client, masterPassword);
         await vaultSvc.initializeEmpty();
       }
 
@@ -111,7 +111,7 @@ export function AuthScreen({ onSuccess, onSwitchSetup }: Props) {
       style={{
         display: "flex",
         flexDirection: "column",
-        minHeight: 560,
+        minHeight: 640,
         background: "#050505",
         position: "relative",
         overflow: "hidden",
@@ -260,7 +260,7 @@ export function AuthScreen({ onSuccess, onSwitchSetup }: Props) {
               letterSpacing: "-0.03em",
             }}
           >
-            {mode === "login" ? "Welcome back" : "Get started"}
+            {mode === "login" ? "Unlock your vault" : "Get started"}
           </div>
         </div>
 
@@ -274,51 +274,53 @@ export function AuthScreen({ onSuccess, onSwitchSetup }: Props) {
             placeholder="you@example.com"
           />
           <Field
-            label="Password"
+            label="Account password"
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={setPassword}
-            placeholder={mode === "login" ? "Your password" : "Account password (12+ chars)"}
+            placeholder={mode === "login" ? "Your account password" : "Create account password (12+ chars)"}
             onToggleShow={() => setShowPassword(!showPassword)}
             showToggle
             showValue={showPassword}
           />
+          <Field
+            label="Master password"
+            type={showMaster ? "text" : "password"}
+            value={masterPassword}
+            onChange={setMasterPassword}
+            placeholder={mode === "login" ? "Your master password" : "Encrypts your vault locally"}
+            onToggleShow={() => setShowMaster(!showMaster)}
+            showToggle
+            showValue={showMaster}
+          />
 
           {mode === "register" && (
-            <>
-              <Field
-                label="Master password"
-                type="password"
-                value={masterPassword}
-                onChange={setMasterPassword}
-                placeholder="Encrypts your vault (never sent to server)"
-              />
-              <Field
-                label="Confirm master password"
-                type="password"
-                value={confirmMaster}
-                onChange={setConfirmMaster}
-                placeholder="Repeat master password"
-                onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && handleSubmit()}
-              />
-            </>
+            <Field
+              label="Confirm master password"
+              type="password"
+              value={confirmMaster}
+              onChange={setConfirmMaster}
+              placeholder="Repeat master password"
+              onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && handleSubmit()}
+            />
           )}
 
-          {mode === "login" && (
-            <div
-              style={{
-                fontSize: 11,
-                color: "#333",
-                padding: "8px 10px",
-                background: "#0a0a0a",
-                borderRadius: 6,
-                border: "1px solid #141414",
-                marginTop: -4,
-              }}
-            >
-              Your account password also serves as the vault encryption key.
-            </div>
-          )}
+          <div
+            style={{
+              fontSize: 11,
+              color: "#333",
+              padding: "8px 10px",
+              background: "#0a0a0a",
+              borderRadius: 6,
+              border: "1px solid #141414",
+              marginTop: -4,
+              lineHeight: 1.5,
+            }}
+          >
+            {mode === "login"
+              ? "Your master password decrypts your vault locally. It is never sent to the server."
+              : "Your master password encrypts your vault. It is never sent to the server."}
+          </div>
 
           {error && (
             <div
@@ -369,10 +371,10 @@ export function AuthScreen({ onSuccess, onSwitchSetup }: Props) {
                     animation: "spin 0.8s linear infinite",
                   }}
                 />
-                {mode === "login" ? "Signing in..." : "Creating account..."}
+                {mode === "login" ? "Unlocking..." : "Creating account..."}
               </>
             ) : mode === "login" ? (
-              "Sign in"
+              "Unlock vault"
             ) : (
               "Create account"
             )}

@@ -158,105 +158,163 @@
     `;
         overlay.innerHTML = `
               <div style="
-                background:#0a0a0a;
+                background:#111;
                 border:1px solid #1e1e1e;
-                border-radius:10px;
-                width:296px;
-                box-shadow:0 24px 64px rgba(0,0,0,0.8),0 1px 0 rgba(255,255,255,0.04) inset;
-                animation:vpSlideDown 0.18s cubic-bezier(0.16,1,0.3,1);
+                border-radius:12px;
+                width:320px;
+                box-shadow:0 8px 32px rgba(0,0,0,0.6),0 1px 0 rgba(255,255,255,0.06) inset;
+                animation:vpSlideDown 0.2s cubic-bezier(0.16,1,0.3,1);
                 overflow:hidden;
                 font-family:'Geist','GeistVariable',system-ui,-apple-system,sans-serif;
                 -webkit-font-smoothing:antialiased;
               ">
-                <!-- Header row -->
+
+                <!-- Top bar -->
                 <div style="
                   display:flex;align-items:center;justify-content:space-between;
-                  padding:11px 13px 10px;
-                  border-bottom:1px solid #141414;
+                  padding:13px 14px 12px;
+                  border-bottom:1px solid #1a1a1a;
                 ">
-                  <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="display:flex;align-items:center;gap:9px;">
                     <div style="
-                      width:24px;height:24px;
-                      background:#111;
-                      border:1px solid #1e1e1e;
-                      border-radius:5px;
+                      width:30px;height:30px;
+                      background:#fff;
+                      border-radius:7px;
                       display:flex;align-items:center;justify-content:center;
                       flex-shrink:0;
                     ">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                       </svg>
                     </div>
                     <div>
-                      <div style="font-size:11px;font-weight:700;color:#fff;letter-spacing:-0.01em;line-height:1.2;">Save to VaultPAPI?</div>
-                      <div style="font-size:10px;color:#3a3a3a;letter-spacing:0.01em;margin-top:1px;">${escapeHtml(domain)}</div>
+                      <div style="font-size:13px;font-weight:700;color:#fff;letter-spacing:-0.02em;line-height:1.2;">Save password?</div>
+                      <div style="font-size:11px;color:#444;margin-top:1px;">${escapeHtml(domain)}</div>
                     </div>
                   </div>
                   <button id="vp-save-close" style="
                     background:none;border:none;
-                    color:#2e2e2e;cursor:pointer;
-                    padding:0;
-                    width:18px;height:18px;
+                    color:#333;cursor:pointer;padding:4px;
                     display:flex;align-items:center;justify-content:center;
-                    border-radius:3px;
-                    transition:color 0.1s;
-                    font-size:0;
+                    border-radius:4px;
                   ">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                     </svg>
                   </button>
                 </div>
-                <!-- Body -->
-                <div style="padding:10px 13px 12px;">
-                  <div style="
-                    font-size:11px;color:#444;
-                    margin-bottom:10px;
-                    line-height:1.4;
-                    color: white;
-                  ">
-                    Save <span style="
-                      color:#d4d4d4;
-                      font-weight:600;
-                      font-family:'GeistMono','Geist Mono',monospace;
-                      font-size:10.5px;
-                      background:#141414;
+
+                <!-- Fields -->
+                <div style="padding:12px 14px 0;">
+
+                  <!-- Username field -->
+                  <div style="margin-bottom:8px;">
+                    <div style="font-size:10px;font-weight:600;color:#3a3a3a;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:5px;">Username</div>
+                    <div style="
+                      background:#0d0d0d;
                       border:1px solid #1e1e1e;
-                      border-radius:3px;
-                      padding:1px 5px;
-                    ">${escapeHtml(username)}</span> to your vault?
-                  </div>
-                  <div style="display:flex;gap:6px;">
-                    <button id="vp-save-btn" style="
-                      flex:1;
-                      background:#fff;color:#000;
-                      border:none;
-                      border-radius:5px;
-                      padding:7px 10px;
-                      font-size:11px;font-weight:700;
-                      cursor:pointer;
+                      border-radius:7px;
+                      padding:9px 11px;
+                      font-size:13px;
+                      color:#e0e0e0;
                       font-family:'Geist',system-ui,sans-serif;
                       letter-spacing:-0.01em;
-                      transition:opacity 0.1s;
-                    ">Save</button>
-                    <button id="vp-notsave-btn" style="
-                      flex:1;
-                      background:#111;color:#555;
-                      border:1px solid #1e1e1e;
-                      border-radius:5px;
-                      padding:7px 10px;
-                      font-size:11px;font-weight:500;
-                      cursor:pointer;
-                      font-family:'Geist',system-ui,sans-serif;
-                      letter-spacing:-0.01em;
-                      transition:all 0.1s;
-                    ">Not now</button>
+                      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+                    ">${escapeHtml(username)}</div>
                   </div>
+
+                  <!-- Password field -->
+                  <div style="margin-bottom:14px;">
+                    <div style="font-size:10px;font-weight:600;color:#3a3a3a;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:5px;">Password</div>
+                    <div style="
+                      background:#0d0d0d;
+                      border:1px solid #1e1e1e;
+                      border-radius:7px;
+                      padding:9px 11px;
+                      display:flex;align-items:center;justify-content:space-between;
+                    ">
+                      <div id="vp-pw-display" style="
+                        font-size:14px;
+                        color:#e0e0e0;
+                        letter-spacing:0.12em;
+                        font-family:'Geist Mono','GeistMono',monospace;
+                        user-select:none;
+                      ">••••••••••••••••</div>
+                      <button id="vp-pw-toggle" style="
+                        background:none;border:none;
+                        color:#3a3a3a;cursor:pointer;
+                        padding:2px;display:flex;align-items:center;
+                        flex-shrink:0;margin-left:8px;
+                      ">
+                        <svg id="vp-eye-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
                 </div>
+
+                <!-- Actions -->
+                <div style="
+                  display:flex;gap:7px;
+                  padding:0 14px 13px;
+                ">
+                  <button id="vp-save-btn" style="
+                    flex:1;
+                    background:#fff;color:#000;
+                    border:none;border-radius:7px;
+                    padding:9px 10px;
+                    font-size:12px;font-weight:700;
+                    cursor:pointer;
+                    font-family:'Geist',system-ui,sans-serif;
+                    letter-spacing:-0.01em;
+                    display:flex;align-items:center;justify-content:center;gap:6px;
+                  ">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Save
+                  </button>
+                  <button id="vp-notsave-btn" style="
+                    flex:1;
+                    background:transparent;color:#444;
+                    border:1px solid #1e1e1e;border-radius:7px;
+                    padding:9px 10px;
+                    font-size:12px;font-weight:500;
+                    cursor:pointer;
+                    font-family:'Geist',system-ui,sans-serif;
+                    letter-spacing:-0.01em;
+                  ">Never</button>
+                </div>
+
               </div>
             `;
 
         document.body.appendChild(overlay);
+
+        // Wire password reveal toggle
+        const pwDisplay = document.getElementById("vp-pw-display");
+        const pwToggle = document.getElementById("vp-pw-toggle");
+        const eyeIcon = document.getElementById("vp-eye-icon");
+        let pwVisible = false;
+        const maskedPw = "•".repeat(Math.min(password.length, 18));
+        const truncatedPw =
+            password.length > 22 ? password.slice(0, 22) + "…" : password;
+
+        pwToggle?.addEventListener("click", () => {
+            pwVisible = !pwVisible;
+            if (pwDisplay) {
+                pwDisplay.textContent = pwVisible ? truncatedPw : maskedPw;
+                pwDisplay.style.letterSpacing = pwVisible ? "0.02em" : "0.12em";
+                pwDisplay.style.fontSize = pwVisible ? "12px" : "14px";
+            }
+            if (eyeIcon) {
+                eyeIcon.innerHTML = pwVisible
+                    ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`
+                    : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+            }
+        });
 
         const dismiss = () => {
             overlay.remove();

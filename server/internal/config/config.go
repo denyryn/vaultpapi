@@ -71,6 +71,10 @@ func (c *Config) ApplyEnvOverrides() error {
 		c.Database.ConnectionString = dbConn
 	}
 
+	if extensionID := os.Getenv("EXTENSION_ID"); extensionID != "" {
+		c.Security.ExtensionID = extensionID
+	}
+
 	if jwtSecret := os.Getenv("JWT_SECRET"); jwtSecret != "" {
 		c.JWT.Secret = jwtSecret
 	}

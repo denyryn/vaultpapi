@@ -2,6 +2,8 @@
 // Uses chrome.storage.session for sensitive in-memory data (cleared on browser close)
 // Uses chrome.storage.local for non-sensitive persistent data
 
+import browser from 'webextension-polyfill';
+
 export interface SessionData {
   token: string;
   masterPassword: string; // held in session only, never persisted
@@ -26,23 +28,16 @@ export interface PersistentConfig {
 // SESSION storage (cleared when browser closes - for sensitive data)
 export const session = {
   async get(): Promise<Partial<SessionData>> {
-    return new Promise((resolve) => {
-      chrome.storage.session.get(null, (items) => {
-        resolve(items as Partial<SessionData>);
-      });
-    });
+    const items = await browser.storage.session.get(null);
+    return items as Partial<SessionData>;
   },
 
   async set(data: Partial<SessionData>): Promise<void> {
-    return new Promise((resolve) => {
-      chrome.storage.session.set(data, resolve);
-    });
+    await browser.storage.session.set(data);
   },
 
   async clear(): Promise<void> {
-    return new Promise((resolve) => {
-      chrome.storage.session.clear(resolve);
-    });
+    await browser.storage.session.clear();
   },
 
   async getToken(): Promise<string | null> {
@@ -64,23 +59,16 @@ export const session = {
 // LOCAL storage (persistent - for non-sensitive config)
 export const local = {
   async get(): Promise<Partial<PersistentConfig>> {
-    return new Promise((resolve) => {
-      chrome.storage.local.get(null, (items) => {
-        resolve(items as Partial<PersistentConfig>);
-      });
-    });
+    const items = await browser.storage.local.get(null);
+    return items as Partial<PersistentConfig>;
   },
 
   async set(data: Partial<PersistentConfig>): Promise<void> {
-    return new Promise((resolve) => {
-      chrome.storage.local.set(data, resolve);
-    });
+    await browser.storage.local.set(data);
   },
 
   async clear(): Promise<void> {
-    return new Promise((resolve) => {
-      chrome.storage.local.clear(resolve);
-    });
+    await browser.storage.local.clear();
   },
 
   async getInstanceUrl(): Promise<string | null> {
@@ -97,22 +85,15 @@ export const local = {
 // Vault cache in session storage (encrypted blob cached locally to avoid re-fetching)
 export const vaultCache = {
   async getEncryptedBlob(): Promise<string | null> {
-    return new Promise((resolve) => {
-      chrome.storage.session.get(["cachedVaultBlob"], (items) => {
-        resolve((items.cachedVaultBlob as string) ?? null);
-      });
-    });
+    const items = await browser.storage.session.get(["cachedVaultBlob"]);
+    return (items.cachedVaultBlob as string) ?? null;
   },
 
   async setEncryptedBlob(blob: string): Promise<void> {
-    return new Promise((resolve) => {
-      chrome.storage.session.set({ cachedVaultBlob: blob }, resolve);
-    });
+    await browser.storage.session.set({ cachedVaultBlob: blob });
   },
 
   async clear(): Promise<void> {
-    return new Promise((resolve) => {
-      chrome.storage.session.remove(["cachedVaultBlob"], resolve);
-    });
+    await browser.storage.session.remove(["cachedVaultBlob"]);
   },
 };

@@ -91,6 +91,10 @@ func (c *Config) ApplyEnvOverrides() error {
 		c.Server.Port = port
 	}
 
+	if host := os.Getenv("HOST"); host != "" {
+		c.Server.Host = host
+	}
+
 	if rateLimit := os.Getenv("RATE_LIMIT_REQUESTS"); rateLimit != "" {
 		val, err := strconv.Atoi(rateLimit)
 		if err != nil {

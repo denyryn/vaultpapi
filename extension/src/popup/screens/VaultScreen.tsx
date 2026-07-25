@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import browser from 'webextension-polyfill';
 import { VaultAPIClient, VaultEntry } from "../../lib/api";
 import { VaultService } from "../../lib/vault";
 import { session, local } from "../../lib/storage";
@@ -108,7 +109,7 @@ export function VaultScreen({ onLogout }: Props) {
     }
 
     async function handleLogout() {
-        chrome.runtime.sendMessage({ type: "LOGOUT" });
+        browser.runtime.sendMessage({ type: "LOGOUT" });
         await session.clear();
         onLogout();
     }

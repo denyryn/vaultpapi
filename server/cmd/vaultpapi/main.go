@@ -22,10 +22,8 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("failed to load .env: ", err)
-	}
+	// ponytail: .env optional, container gets env vars from compose
+	_ = godotenv.Load()
 
 	configPath := flag.String("config", "config.yaml", "Path to configuration file")
 	runMigrations := flag.Bool("migrate", false, "Run database migrations")

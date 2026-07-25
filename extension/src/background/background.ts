@@ -1,6 +1,7 @@
 // Background service worker
 // Handles: token management, vault sync messages, autofill coordination
 
+import browser from 'webextension-polyfill';
 import { VaultAPIClient } from "../lib/api";
 import { VaultService } from "../lib/vault";
 import { session, local } from "../lib/storage";
@@ -60,7 +61,7 @@ async function getOrCreateVaultService(): Promise<VaultService | null> {
     return vaultService;
 }
 
-chrome.runtime.onMessage.addListener(
+browser.runtime.onMessage.addListener(
     (message: Message, _sender, sendResponse) => {
         handleMessage(message)
             .then(sendResponse)
@@ -127,11 +128,8 @@ async function handleMessage(message: Message): Promise<unknown> {
         }
 
         case "CLEAR_PENDING_SAVE": {
-            return new Promise((resolve) => {
-                chrome.storage.session.remove(["pendingSave"], () => {
-                    resolve({ success: true });
-                });
-            });
+            await browser.storage.session.remove(["pendingSave"]);
+            return { success: true };
         }
 
         default:
@@ -139,7 +137,7 @@ async function handleMessage(message: Message): Promise<unknown> {
     }
 }
 
-chrome.storage.session.onChanged.addListener((changes) => {
+browser.storage.session.onChanged.addListener((changes) => {
     if (changes.token || changes.masterPassword) {
         vaultService = null;
     }

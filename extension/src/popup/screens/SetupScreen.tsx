@@ -7,7 +7,7 @@ interface Props {
 }
 
 export function SetupScreen({ onComplete }: Props) {
-  const [url, setUrl] = useState("http://localhost:8080");
+  const [url, setUrl] = useState("http://localhost:30144");
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);

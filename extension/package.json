@@ -5,12 +5,15 @@
   "scripts": {
     "dev": "vite build --watch",
     "build": "vite build",
+    "build:firefox": "vite build && node scripts/build-firefox.js",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/webextension-polyfill": "^0.12.5",
+    "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "lucide-react": "^0.468.0"
+    "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.279",

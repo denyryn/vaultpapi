@@ -1,6 +1,6 @@
 # VaultPAPI Extension
 
-A Chrome/Edge browser extension for [VaultPAPI](../server) — the self-hosted, zero-knowledge password manager.
+A Chrome/Edge/Firefox/Zen browser extension for [VaultPAPI](../server) — the self-hosted, zero-knowledge password manager.
 
 ## Features
 
@@ -69,12 +69,21 @@ chrome.storage.local     ← instanceUrl, userEmail
 
 ### Build
 
+**Chrome/Edge:**
 ```bash
 npm install
 npm run build
 ```
 
 Output is in `dist/`.
+
+**Firefox/Zen:**
+```bash
+npm install
+npm run build:firefox
+```
+
+Output is in `dist-firefox/`.
 
 ### Load in Chrome/Edge
 
@@ -83,18 +92,27 @@ Output is in `dist/`.
 3. Click **Load unpacked**
 4. Select the `dist/` directory
 
+### Load in Firefox/Zen
+
+1. Build Firefox version: `npm run build:firefox`
+2. Open `about:debugging#/runtime/this-firefox`
+3. Click **Load Temporary Add-on**
+4. Select `dist-firefox/manifest.json`
+
+Output is in `dist-firefox/`.
+
 ### Development (watch mode)
 
 ```bash
 npm run dev
 ```
 
-Vite rebuilds on every file change. Reload the extension in `chrome://extensions` after each build.
+Vite rebuilds on every file change. Reload the extension in `chrome://extensions` or `about:debugging` after each build.
 
 ## First-time Setup
 
 1. Click the VaultPAPI icon in the toolbar
-2. Enter your instance URL (e.g. `https://vault.yourdomain.com` or `http://localhost:8080`)
+2. Enter your instance URL (e.g. `https://vault.yourdomain.com` or `http://localhost:30144`)
 3. Click **Connect** — the extension health-checks the server
 4. **Register** a new account or **Sign in** to an existing one
 5. Your vault is created and encrypted immediately

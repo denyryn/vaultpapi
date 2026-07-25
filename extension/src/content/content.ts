@@ -3,6 +3,8 @@
 // Shows: autofill suggestions, save password prompts
 // Auto-fills: single match on page load, dropdown for multiple matches
 
+import browser from 'webextension-polyfill';
+
 (function () {
     "use strict";
 
@@ -116,7 +118,7 @@
 
         const domain = new URL(trackedUrl).hostname.replace("www.", "");
 
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
             type: "SET_PENDING_SAVE",
             data: {
                 username: trackedUsername,
@@ -319,7 +321,7 @@
         const dismiss = () => {
             overlay.remove();
             savePromptShown = false;
-            chrome.runtime.sendMessage({ type: "CLEAR_PENDING_SAVE" });
+            browser.runtime.sendMessage({ type: "CLEAR_PENDING_SAVE" });
         };
 
         document
@@ -331,7 +333,7 @@
         document
             .getElementById("vp-save-btn")
             ?.addEventListener("click", () => {
-                chrome.runtime.sendMessage({
+                browser.runtime.sendMessage({
                     type: "SAVE_NEW_ENTRY",
                     entry: { title: domain, url, username, password },
                 });
@@ -403,21 +405,21 @@
     // picks up the pendingSave written by the previous page's beforeunload handler
 
     function checkPendingSave() {
-        chrome.runtime.sendMessage({ type: "GET_PENDING_SAVE" }, (data) => {
+        browser.runtime.sendMessage({ type: "GET_PENDING_SAVE" }, (data) => {
             const pending = data?.pendingSave;
             if (!pending) return;
 
-            chrome.runtime.sendMessage(
+            browser.runtime.sendMessage(
                 { type: "GET_AUTH_STATUS" },
                 (status) => {
                     if (!status?.authenticated) {
-                        chrome.runtime.sendMessage({
+                        browser.runtime.sendMessage({
                             type: "CLEAR_PENDING_SAVE",
                         });
                         return;
                     }
 
-                    chrome.runtime.sendMessage(
+                    browser.runtime.sendMessage(
                         {
                             type: "GET_VAULT_ENTRIES_FOR_URL",
                             url: pending.url,
@@ -426,7 +428,7 @@
                             const exists = (response?.entries ?? []).some(
                                 (e) => e.username === pending.username,
                             );
-                            chrome.runtime.sendMessage({
+                            browser.runtime.sendMessage({
                                 type: "CLEAR_PENDING_SAVE",
                             });
 
@@ -581,13 +583,13 @@
     }
 
     function tryPageLoadAutofill() {
-        chrome.runtime.sendMessage({ type: "GET_AUTH_STATUS" }, (status) => {
+        browser.runtime.sendMessage({ type: "GET_AUTH_STATUS" }, (status) => {
             if (!status?.authenticated) return;
 
             const passwordInputs = getPasswordInputs();
             if (passwordInputs.length === 0) return;
 
-            chrome.runtime.sendMessage(
+            browser.runtime.sendMessage(
                 {
                     type: "GET_VAULT_ENTRIES_FOR_URL",
                     url: window.location.href,
@@ -666,12 +668,12 @@
             if (input.type !== "password" || !isVisible(input)) return;
             if (input.value) return;
 
-            chrome.runtime.sendMessage(
+            browser.runtime.sendMessage(
                 { type: "GET_AUTH_STATUS" },
                 (status) => {
                     if (!status?.authenticated) return;
 
-                    chrome.runtime.sendMessage(
+                    browser.runtime.sendMessage(
                         {
                             type: "GET_VAULT_ENTRIES_FOR_URL",
                             url: window.location.href,

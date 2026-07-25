@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -52,12 +53,32 @@ func New(ctx context.Context, cfg config.DatabaseConfig) (*Storage, error) {
 		return nil, fmt.Errorf("failed to create connection pool: %w", err)
 	}
 
-	if err := pool.Ping(ctx); err != nil {
-		pool.Close()
-		return nil, fmt.Errorf("failed to ping database: %w", err)
-	}
-
 	return &Storage{pool: pool}, nil
+}
+
+func NewWithRetry(ctx context.Context, cfg config.DatabaseConfig) (*Storage, error) {
+	var s *Storage
+	var err error
+
+	for attempt := 1; ; attempt++ {
+		s, err = New(ctx, cfg)
+		if err == nil {
+			return s, nil
+		}
+
+		backoff := time.Duration(attempt*2) * time.Second
+		if backoff > 30*time.Second {
+			backoff = 30 * time.Second
+		}
+
+		log.Printf("DB connection failed (attempt %d): %v — retrying in %v", attempt, err, backoff)
+
+		select {
+		case <-time.After(backoff):
+		case <-ctx.Done():
+			return nil, fmt.Errorf("db connection cancelled: %w", ctx.Err())
+		}
+	}
 }
 
 func (s *Storage) Close() {

@@ -1,19 +1,15 @@
-version: "3.8"
-
 services:
   server:
     build:
       context: ./server
       dockerfile: Dockerfile
-    container_name: vaultpapi-server
-    environment:
-      DATABASE_URL: "postgres://user:password@Postgres-DB:5432/vaultpapi?sslmode=disable"
-      JWT_SECRET: "change-this-to-a-secure-secret-at-least-32-bytes"
-      PORT: "8080"
+    container_name: ${CONTAINER_NAME:-vaultpapi-server}
+    env_file:
+      - ./server/.env
     ports:
-      - "30144:8080"
+      - "${HOST_PORT:-30144}:${PORT:-8080}"
     networks:
-      - shared_net
+      - ${NETWORK_NAME:-shared_net}
     restart: unless-stopped
 
 networks:

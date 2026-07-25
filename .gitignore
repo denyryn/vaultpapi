@@ -1,0 +1,6 @@
+# Firefox manifest files
+dist-firefox/
+extension/dist-firefox/
+extension/public/manifest.firefox.json
+vaultpapi-firefox.xpi
+*.xpi

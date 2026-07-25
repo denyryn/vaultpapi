@@ -3,6 +3,8 @@ ARG BINARY=vaultpapi
 ARG PORT=8080
 
 FROM golang:${GO_VERSION} AS builder
+ARG BINARY
+ARG PORT
 
 WORKDIR /app
 
@@ -15,6 +17,8 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o ${BINARY} ./cmd/${BINARY}
 
 FROM alpine:latest
+ARG BINARY
+ARG PORT
 
 RUN apk --no-cache add ca-certificates
 

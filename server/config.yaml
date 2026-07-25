@@ -1,5 +1,10 @@
 database:
-    connection_string: "postgres://postgres:postgres@localhost:5432/vaultpapi?sslmode=disable"
+    user: "postgres"
+    password: "postgres"
+    host: "localhost"
+    port: "5432"
+    dbname: "vaultpapi"
+    sslmode: "disable"
     max_conns: 10
     min_conns: 2
 

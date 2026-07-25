@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"strconv"
 	"time"
@@ -18,8 +19,23 @@ type Config struct {
 
 type DatabaseConfig struct {
 	ConnectionString string `yaml:"connection_string"`
+	User             string `yaml:"user"`
+	Password         string `yaml:"password"`
+	Host             string `yaml:"host"`
+	Port             string `yaml:"port"`
+	DBName           string `yaml:"dbname"`
+	SSLMode          string `yaml:"sslmode"`
 	MaxConns         int32  `yaml:"max_conns"`
 	MinConns         int32  `yaml:"min_conns"`
+}
+
+func (d *DatabaseConfig) BuildURL() string {
+	if d.ConnectionString != "" {
+		return d.ConnectionString
+	}
+	password := url.QueryEscape(d.Password)
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
+		d.User, password, d.Host, d.Port, d.DBName, d.SSLMode)
 }
 
 type ServerConfig struct {
@@ -67,6 +83,37 @@ func Load(path string) (*Config, error) {
 }
 
 func (c *Config) ApplyEnvOverrides() error {
+	var pgSet bool
+
+	if dbUser := os.Getenv("POSTGRES_USER"); dbUser != "" {
+		c.Database.User = dbUser
+		pgSet = true
+	}
+	if dbPassword := os.Getenv("POSTGRES_PASSWORD"); dbPassword != "" {
+		c.Database.Password = dbPassword
+		pgSet = true
+	}
+	if dbHost := os.Getenv("POSTGRES_HOST"); dbHost != "" {
+		c.Database.Host = dbHost
+		pgSet = true
+	}
+	if dbPort := os.Getenv("POSTGRES_PORT"); dbPort != "" {
+		c.Database.Port = dbPort
+		pgSet = true
+	}
+	if dbName := os.Getenv("POSTGRES_DB"); dbName != "" {
+		c.Database.DBName = dbName
+		pgSet = true
+	}
+	if sslMode := os.Getenv("POSTGRES_SSLMODE"); sslMode != "" {
+		c.Database.SSLMode = sslMode
+		pgSet = true
+	}
+
+	if pgSet {
+		c.Database.ConnectionString = ""
+	}
+
 	if dbConn := os.Getenv("DATABASE_URL"); dbConn != "" {
 		c.Database.ConnectionString = dbConn
 	}
@@ -107,8 +154,12 @@ func (c *Config) ApplyEnvOverrides() error {
 }
 
 func (c *Config) Validate() error {
-	if c.Database.ConnectionString == "" {
-		return fmt.Errorf("database connection_string is required")
+	if c.Database.ConnectionString != "" {
+		// ponytail: already set via DATABASE_URL env or config.yaml
+	} else if c.Database.Host != "" {
+		c.Database.ConnectionString = c.Database.BuildURL()
+	} else {
+		return fmt.Errorf("database connection_string or POSTGRES_* vars are required")
 	}
 	if c.JWT.Secret == "" {
 		return fmt.Errorf("JWT secret is required")
@@ -159,6 +210,12 @@ func DefaultConfig() *Config {
 	return &Config{
 		Database: DatabaseConfig{
 			ConnectionString: "postgres://postgres:postgres@localhost:5432/vaultpapi?sslmode=disable",
+			User:             "postgres",
+			Password:         "postgres",
+			Host:             "localhost",
+			Port:             "5432",
+			DBName:           "vaultpapi",
+			SSLMode:          "disable",
 			MaxConns:         10,
 			MinConns:         2,
 		},
